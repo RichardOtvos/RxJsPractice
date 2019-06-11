@@ -1,3 +1,7 @@
+import { ajax } from "rxjs/ajax";
+import { map } from "rxjs/operators";
+import { merge } from "rxjs";
+
 let canvas = <HTMLCanvasElement>document.querySelector('canvas');
 canvas.width = 450;
 canvas.height = 540;
@@ -11,3 +15,29 @@ function drawToPage(config) {
   }
   img.src = URL.createObjectURL(config.blob);
 }
+
+let requests = [];
+for (let x = 0; x < 10; x++) {
+  for (let y = 0; y < 10; y++) {
+    let endpoint =
+      `http://localhost:3000/api/managingAsync/assets/coverpart-${x}-${y}.png`;
+    let request$ = ajax({
+      url: endpoint,
+      responseType: 'blob'
+    })
+      .pipe(
+        map(res => ({
+          blob: res.response,
+          x,
+          y
+        }))
+      );
+    requests.push(request$);
+  }
+}
+
+merge(...requests)
+  .subscribe(
+    res => drawToPage(res),
+    err => console.error(`An error happened!`)
+  )

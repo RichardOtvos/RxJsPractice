@@ -14,7 +14,7 @@ function pigLatinify(word) {
 }
 
 keyUp$.pipe(
-    map((event:KeyboardEvent) => event.target.value),
+    map((event) => (<HTMLTextAreaElement>event.target).value),
     mergeMap(sentence =>
         from(sentence.split(/\s+/))
             .pipe(
