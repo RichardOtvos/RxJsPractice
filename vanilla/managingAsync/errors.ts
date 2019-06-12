@@ -11,3 +11,19 @@ for (let i = 0; i < 128; i++) {
 }
 
 let loadingRequestsBad$ = merge(...arrayOfRequests);
+
+loadingRequestsBad$
+  .pipe(
+    scan((prev: number) => prev + (100 / arrayOfRequests.length), 0)
+  )
+  .subscribe(
+    (percentDone: number) => {
+      progressBar.style.width = `${percentDone}%'`;
+      progressBar.innerText = `${Math.round(percentDone)}`;
+    },
+    (err) => {
+        console.log(err);
+        msgArea.innerText = 'Something went wrong, please try again.';
+        msgArea.style.display = 'block';
+    }
+  )
